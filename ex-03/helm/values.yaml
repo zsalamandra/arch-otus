@@ -1,0 +1,44 @@
+replicaCount: 1
+
+config:
+  namespace: arch-otus
+
+image:
+  repository: zsalamandra/ex03-dzm
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+postgresql:
+  postgres-name: ex03-postgresql
+  datasource_url: jdbc:postgresql://ex03-postgresql.arch-otus.svc.cluster.local:5432/
+  database_name: ex03-db
+  database_user: root
+  database_password: root
+
+service:
+  type: ClusterIP
+  name: ex03-service
+  port: 8080
+
+ingress:
+  name: ex03-ingress
+  port: 9000
+  enabled: true
+  className: "nginx"
+  host: arch.homework
+
+livenessProbe:
+  httpGet:
+    path: /api/v1/health
+    port: http
+  initialDelaySeconds: 20
+  periodSeconds: 5
+  timeoutSeconds: 5
+
+readinessProbe:
+  httpGet:
+    path: /api/v1/health
+    port: http
+  initialDelaySeconds: 20
+  periodSeconds: 5
+  timeoutSeconds: 5

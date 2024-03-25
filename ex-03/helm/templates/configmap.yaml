@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ex03-config
+data:
+  SERVER_PORT: "{{ .Values.service.port }}"
+  DATASOURCE_URL: "{{ .Values.postgresql.datasource_url }}{{ .Values.postgresql.database_name }}"
+  DATABASE_USER: "{{ .Values.postgresql.database_user }}"

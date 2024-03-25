@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ex01-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: arch.homework
+      http:
+        paths:
+          - path: /()(health)$
+            pathType: Prefix
+            backend:
+              service:
+                name: ex02-service
+                port:
+                  number: 9000
+          - path: /otusapp/zsalamandra($|/)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: ex02-service
+                port:
+                  number: 9000

@@ -1,0 +1,8 @@
+version: '3.7'
+services:
+  ex1:
+    container_name: ex1-dzm
+    build: .
+    ports:
+      - '8000:8000'
+    restart: on-failure

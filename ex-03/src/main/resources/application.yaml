@@ -1,0 +1,18 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: ex03
+
+  datasource:
+    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5432/ex03-db}
+    username: ${DATASOURCE_USERNAME:root}
+    password: ${DATASOURCE_PASSWORD:root}
+
+management:
+  endpoints:
+    web:
+      base-path: /api/v1
+      path-mapping:
+        health: /health
