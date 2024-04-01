@@ -3,35 +3,27 @@
 ### Запуск
 Из папки ex-03/helm применить команды
 
+Для проверки приложения проделать следующие шаги:
+1. Выполнить команду установки:
 ```
-1. Установки: 
-
-sh setup.sh 
-
-В процессе выполнения скрипта, автоматически произведутся следующие действия:
-    - установка yg (возможно потребуется ввод пароля администратора)
-    - чтение необходимых переменных с файла velues.yaml
-    - создание неймспейс
-    - установка namespace как текущего для kubectl в этой сессии
-    - добавление репозитория чартов bitnami и ingress-nginx
-    - установка PostgreSQL
-    - установка Ingress контроллера
-    - разворачивание приложения
+kubectl create namespace dadaev-arch-otus &&
+helm repo add bitnami https://charts.bitnami.com/bitnami &&
+helm install ex03-postgresql bitnami/postgresql -n dadaev-arch-otus \
+--set auth.username=root \
+--set auth.password=root \
+--set auth.database=ex03-db &&
+helm install ex03-dadaev -n dadaev-arch-otus .
 ```
+2. Выполнить команду проверки:
 ```
-2. Для проверки CRUD операций выполнить команду: 
-
-newman run otus-ex-03.postman_collection.json
+    newman run otus-ex-03.postman_collection.json
 ```
+3. Выполнить удаления:
 ```
-3. Очистки:
-
-sh terdown.sh 
-
-В процессе выполнения скрипта, автоматически произведутся следующие действия:
-    - удалятся все ресурсы неймспейса (arch-ous), указаные в values.yaml
+helm uninstall ex03-dadaev -n dadaev-arch-otus &&
+helm uninstall ex03-postgresql -n dadaev-arch-otus &&
+kubectl delete namespace dadaev-arch-otus
 ```
-
 
 В этом ДЗ вы создадите простейший RESTful CRUD.
 

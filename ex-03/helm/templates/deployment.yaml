@@ -1,18 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "ex03.fullname" . }}
-  labels:
-    {{- include "ex03.labels" . | nindent 4 }}
+  name: {{ .Values.deployment.name }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.deployment.replicaCount }}
   selector:
     matchLabels:
-      {{- include "ex03.selectorLabels" . | nindent 6 }}
+      app: ex03-dadaev
   template:
     metadata:
       labels:
-        {{- include "ex03.labels" . | nindent 8 }}
+        app: ex03-dadaev
     spec:
       containers:
         - name: {{ .Chart.Name }}
@@ -45,4 +43,4 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: ex03-secret
-                  key: postgres-password
+                  key: POSTGRES_PASSWORD
