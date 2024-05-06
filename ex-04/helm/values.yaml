@@ -1,0 +1,43 @@
+image:
+  repository: zsalamandra/ex04-dzm
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+deployment:
+  name: ex04-deployment
+  replicaCount: 1
+
+postgresql:
+  postgres_name: ex04-postgresql
+  datasource_url: jdbc:postgresql://ex03-postgresql.dadaev-arch-otus.svc.cluster.local:5432/
+  database_name: ex04-db
+  database_user: root
+  database_password: root
+
+service:
+  type: ClusterIP
+  name: ex04-service
+  port: 8080
+
+ingress:
+  name: ex04-ingress
+  port: 9000
+  enabled: true
+  className: "nginx"
+  host: arch.homework
+
+livenessProbe:
+  httpGet:
+    path: /api/v1/health
+    port: http
+  initialDelaySeconds: 20
+  periodSeconds: 5
+  timeoutSeconds: 5
+
+readinessProbe:
+  httpGet:
+    path: /api/v1/health
+    port: http
+  initialDelaySeconds: 20
+  periodSeconds: 5
+  timeoutSeconds: 5

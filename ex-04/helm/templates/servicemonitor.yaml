@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: ex04-dadaev--servicemonitor
+  labels:
+    app: ex04-dadaev
+spec:
+  namespaceSelector:
+    matchNames:
+      - default
+  selector:
+    matchLabels:
+      app: ex04-dadaev
+  endpoints:
+    - port: http
+      interval: 15s
+      path: /prometheus

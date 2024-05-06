@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/arch-otus.iml" filepath="$PROJECT_DIR$/arch-otus.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ex-04/ex-04.iml" filepath="$PROJECT_DIR$/ex-04/ex-04.iml" />
     </modules>
   </component>
 </project>

@@ -1,7 +1,8 @@
 controller:
   kind: DaemonSet
   extraArgs:
-    metrics-per-host: false
+    enable-metrics: true
+    metrics-per-host: true
   reportNodeInternalIp: true
   hostPort:
     enabled: true

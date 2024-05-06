@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.service.name }}
+spec:
+  selector:
+    app: ex03-dadaev
+  type: {{ .Values.service.type }}
+  ports:
+    - protocol: TCP
+      name: http
+      port: {{ .Values.ingress.port }}
+      targetPort: {{ .Values.service.port }}

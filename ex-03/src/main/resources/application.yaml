@@ -6,13 +6,23 @@ spring:
     name: ex03
 
   datasource:
-    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5432/ex03-db}
+    url: ${DATASOURCE_URL:jdbc:postgresql://192.168.1.122:5432/ex04-db}
     username: ${DATASOURCE_USERNAME:root}
     password: ${DATASOURCE_PASSWORD:root}
 
 management:
   endpoints:
     web:
+      exposure:
+        include: "*"
       base-path: /api/v1
       path-mapping:
         health: /health
+  metrics:
+    distribution:
+      slo:
+        http.server.requests: 10ms, 50ms, 100ms, 200ms, 300ms, 400ms, 500ms, 600ms, 800ms
+  prometheus:
+    metrics:
+      export:
+        enabled: true
