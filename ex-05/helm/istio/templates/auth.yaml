@@ -1,0 +1,75 @@
+---
+apiVersion: networking.istio.io/v1alpha3  # Версия API Istio, используемая для определения конфигурации Envoy Filter
+kind: EnvoyFilter  # Указывает, что это ресурс типа EnvoyFilter, который изменяет поведение Envoy-прокси
+metadata:
+  name: external-auth  # Имя фильтра для идентификации в кластере
+  namespace: istio-system  # Указывает, что ресурс будет создан в пространстве имен istio-system
+spec:
+  workloadSelector:
+    labels:
+      istio: ingressgateway  # Метка, определяющая конкретный Istio Ingress Gateway
+      app: istio-ingressgateway  # Ещё одна метка для идентификации Ingress Gateway
+  configPatches:
+    - applyTo: CLUSTER  # Изменение будет применяться на уровне кластера (к кластерным настройкам)
+      match:
+        context: ANY  # Применяет изменения к любому контексту использования (Inbound/Outbound/ANY)
+        cluster: { }  # Пустой объект, чтобы применить изменения ко всем кластерам
+      patch:
+        operation: ADD  # Указывает операцию добавления новых настроек
+        value:
+          name: ext_authz  # Имя нового кластера, добавляемого в конфигурацию Envoy
+          connect_timeout: 5s  # Максимальное время ожидания соединения с этим кластером
+          type: LOGICAL_DNS  # Тип кластера: LOGICAL_DNS означает DNS-базированный балансировщик
+          lb_policy: ROUND_ROBIN  # Политика балансировки нагрузки: Round-Robin, равномерно распределяет запросы
+          http_protocol_options: { }  # Настройки HTTP-протокола по умолчанию
+          load_assignment:
+            cluster_name: ext_authz  # Указывает имя кластера для настройки Endpoints
+            endpoints:
+              - lb_endpoints:  # Список конечных точек балансировщика нагрузки
+                  - endpoint:
+                      address:
+                        socket_address:
+                          address: arch-auth-service.dadaev-arch-otus.svc.cluster.local  # DNS-адрес конечной точки сервиса авторизации
+                          port_value: 9000  # Порт, на котором сервис авторизации прослушивает запросы
+
+    - applyTo: HTTP_FILTER # Добавляем фильтр аутентификации на все маршруты в Gateway
+      match:
+        context: GATEWAY
+      patch:
+        operation: INSERT_BEFORE # Аутентификация должна отработать раньше фильтра JWT, чтобы он подхватил токен, переданный из auth-service
+        filterClass: AUTHN
+        value:
+          name: envoy.filters.http.ext_authz
+          typed_config:
+            "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
+            stat_prefix: ext_authz
+            transport_api_version: V3
+            http_service:
+              server_uri:
+                uri: http://arch-auth-service.dadaev-arch-otus.svc.cluster.local
+                cluster: ext_authz
+                timeout: 10s
+              path_prefix: "/auth/istio"
+              authorization_request:
+                allowed_headers:
+                  patterns:
+                    - exact: "x-auth-token"
+              authorization_response:
+                allowed_upstream_headers:
+                  patterns:
+                    - exact: "x-auth-token"
+
+    - applyTo: HTTP_ROUTE # Отключаем аутентификацию для маршрутов связанных с методом входа и выхода
+      match:
+        context: GATEWAY
+        routeConfiguration:
+          vhost:
+            route:
+              name: "auth-whitelisted"
+      patch:
+        operation: MERGE
+        value:
+          typed_per_filter_config:
+            envoy.filters.http.ext_authz:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthzPerRoute
+              disabled: true

@@ -1,0 +1,27 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet id="create-table-profile" author="Zaur Dadaev">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="profiles"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="profiles" remarks="Профили">
+            <column name="id" type="uuid" remarks="Идентификатор профиля пользователя">
+                <constraints primaryKey="true" primaryKeyName="pk_profile"/>
+            </column>
+            <column name="email" type="varchar(255)" remarks="Адрес электронной почты">
+                <constraints nullable="false"/>
+            </column>
+            <column name="full_name" type="varchar(255)" remarks="ФИО">
+            </column>
+            <column name="age" type="INTEGER" remarks="Возраст">
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

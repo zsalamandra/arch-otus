@@ -1,0 +1,25 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet id="add-columns-profile" author="Zaur Dadaev">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="profiles"/>
+            <and>
+                <not>
+                    <columnExists tableName="profiles" columnName="first_name"/>
+                    <columnExists tableName="profiles" columnName="last_name"/>
+                    <columnExists tableName="profiles" columnName="passport_number"/>
+                </not>
+            </and>
+        </preConditions>
+
+        <addColumn tableName="profiles">
+            <column name="first_name" type="varchar(100)"/>
+            <column name="last_name" type="varchar(100)"/>
+            <column name="passport_number" type="varchar(100)"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>
