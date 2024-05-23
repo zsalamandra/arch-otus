@@ -9,7 +9,13 @@
         <option value="$PROJECT_DIR$/ex-05/applications/user-service/pom.xml" />
         <option value="$PROJECT_DIR$/ex-05/auth-app/pom.xml" />
         <option value="$PROJECT_DIR$/ex-05/profile-app/pom.xml" />
+        <option value="$PROJECT_DIR$/ex-06/app-order/pom.xml" />
       </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/ex-06/app-order/pom.xml" />
+      </set>
     </option>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_21" project-jdk-name="17" project-jdk-type="JavaSDK">

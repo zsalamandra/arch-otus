@@ -1,0 +1,32 @@
+config:
+  name: arch-camunda-orchestrator-configmap
+  port: 8000
+  ddl: validate
+secret:
+  name: arch-camunda-orchestrator-secret
+deployment:
+  app:
+    image: zsalamandra/camunda-orchestrator
+    port: 8000
+    replicas: 1
+  db:
+    image: postgres:latest
+    port: 5432
+    replicas: 1
+service:
+  app:
+    name: arch-camunda-orchestrator-service
+    type: ClusterIP
+    protocol: TCP
+    port: 9000
+  db:
+    name: postgresql-camunda-orchestrator-service
+    host: "postgresql-camunda-orchestrator-service"
+    type: ClusterIP
+    port: 5432
+    sport: "5432"
+    dbname: arch_camunda-orchestrator_db
+    dbschema: public
+ingress:
+  name: otus-hw08-ingress
+  host: arch.homework

@@ -1,0 +1,9 @@
+apiVersion: v2
+name: arch-billing
+version: 1.0.0
+description: ArchHomework Billing
+type: application
+maintainers:
+  - name: Zaur Dadaev
+    email: zaur121079@gmail.com
+appVersion: 1.0.0
