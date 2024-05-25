@@ -1,0 +1,540 @@
+{
+	"info": {
+		"_postman_id": "71ad4e40-d02b-44f1-b8ba-9604127889e4",
+		"name": "ex-08",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20534987"
+	},
+	"item": [
+		{
+			"name": "Create Order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var id = JSON.parse(responseBody);\r",
+							"pm.collectionVariables.set(\"order1\", id);\r",
+							"\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"console.log(\"Id заказа при первом запросе \" + id);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set (\"idempotencyKey\", require('uuid').v4());\r",
+							"pm.collectionVariables.set (\"profileId\", require('uuid').v4());"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "idempotency-key",
+						"value": "{{idempotencyKey}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"productQuantity\" : 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/?profileId={{profileId}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "asfa",
+							"disabled": true
+						},
+						{
+							"key": "profileId",
+							"value": "{{profileId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Created Order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"var productQuantity = (jsonData.productQuantity);\r",
+							"\r",
+							"pm.test(\"При запросе созданного заказа количество товара соответствует заданному значению\", function () {\r",
+							"    pm.expect(productQuantity).to.equal(2)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/{{order1}}?profileId={{profileId}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"{{order1}}"
+					],
+					"query": [
+						{
+							"key": "profileId",
+							"value": "{{profileId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Orders By ProfileId",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"var data = pm.response.json().length;\r",
+							"\r",
+							"pm.test(\"Запрос на получение всех заказов профиля выдает 1 заказ\", function () {\r",
+							"    pm.expect(data).to.equal(1)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/?profileId={{profileId}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "profileId",
+							"value": "{{profileId}}"
+						},
+						{
+							"key": "",
+							"value": "asfa",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Order (Same idempotencyKey)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"var orderId = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.test(\"Запрос на создание заказа с таким же idempotencyKey возвращает id уже созданного заказа при первом запросе\", function () {\r",
+							"    pm.expect(orderId).to.equal(pm.collectionVariables.get(\"order1\"))\r",
+							"});\r",
+							"\r",
+							"console.log(\"Id заказа при повторном запросе с тем же idempotencyKey \" + orderId);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "idempotency-key",
+						"value": "{{idempotencyKey}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"productQuantity\" : 999\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/?profileId={{profileId}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "profileId",
+							"value": "{{profileId}}"
+						},
+						{
+							"key": "",
+							"value": "asfa",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"var productQuantity = (jsonData.productQuantity);\r",
+							"\r",
+							"pm.test(\"При запросе созданного заказа количество товара соответствует заданному значению при первом запросе\", function () {\r",
+							"    pm.expect(productQuantity).to.equal(2)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/{{order1}}?profileId={{profileId}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"{{order1}}"
+					],
+					"query": [
+						{
+							"key": "profileId",
+							"value": "{{profileId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Orders By ProfileId",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"var data = pm.response.json().length;\r",
+							"\r",
+							"pm.test(\"Запрос на получение всех заказов профиля выдает 1 заказ\", function () {\r",
+							"    pm.expect(data).to.equal(1)\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/?profileId={{profileId}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "asfa",
+							"disabled": true
+						},
+						{
+							"key": "profileId",
+							"value": "{{profileId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Order Other Idempotency Key",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set (\"idempotencyKey\", require('uuid').v4());"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var id = JSON.parse(responseBody);\r",
+							"pm.collectionVariables.set(\"order2\", id);\r",
+							"\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"console.log(\"Id второго заказа \" + id);\r",
+							"pm.test(\"При измененном idempotencyKey id созданного заказа отличается от id в прошлом запросе\", function () {\r",
+							"    pm.expect(pm.collectionVariables.get(\"order1\")).to.not.equal(pm.collectionVariables.get(\"order2\"))\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "idempotency-key",
+						"value": "{{idempotencyKey}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"productQuantity\" : 3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/?profileId={{profileId}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "profileId",
+							"value": "{{profileId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Order 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"var productQuantity = (jsonData.productQuantity);\r",
+							"\r",
+							"pm.test(\"При запросе созданного заказа количество товара соответствует заданному значению\", function () {\r",
+							"    pm.expect(productQuantity).to.equal(3)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/{{order2}}?profileId={{profileId}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"{{order2}}"
+					],
+					"query": [
+						{
+							"key": "profileId",
+							"value": "{{profileId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Orders By ProfileId",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"var data = pm.response.json().length;\r",
+							"\r",
+							"pm.test(\"Запрос на получение всех заказов профиля выдает 2 заказа\", function () {\r",
+							"    pm.expect(data).to.equal(2)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/?profileId={{profileId}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "profileId",
+							"value": "{{profileId}}"
+						},
+						{
+							"key": "",
+							"value": "asfa",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "arch.homework/otusapp/zsalamandra",
+			"type": "string"
+		},
+		{
+			"key": "profileId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "order1",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "order2",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "idempotencyKey",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
