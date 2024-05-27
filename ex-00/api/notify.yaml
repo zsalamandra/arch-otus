@@ -1,0 +1,29 @@
+openapi: 3.0.3
+info:
+  title: Сервис Уведомлений
+  version: 1.0.0
+paths:
+  /api/v1/notifications:
+    get:
+      summary: Отображает все уведомления пользователя
+      responses:
+        '200':
+          description: Список уведомлений
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    message:
+                      type: string
+
+  /api/v1/notifications/health:
+    get:
+      summary: Возвращает состояние сервиса
+      responses:
+        '200':
+          description: Сервис работает

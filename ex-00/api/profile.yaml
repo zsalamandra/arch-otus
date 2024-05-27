@@ -1,0 +1,82 @@
+openapi: 3.0.3
+info:
+  title: Сервис Управления Профилем
+  version: 1.0.0
+paths:
+  /api/v1/profiles/{id}:
+    get:
+      summary: Запрос профиля пользователя
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Профиль найден
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  email:
+                    type: string
+        '404':
+          description: Профиль не найден
+
+  /api/v1/profiles:
+    post:
+      summary: Создание нового профиля
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+              required:
+                - name
+                - email
+      responses:
+        '201':
+          description: Профиль создан
+
+  /api/v1/profiles/{id}:
+    patch:
+      summary: Редактирование профиля
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+      responses:
+        '200':
+          description: Профиль обновлен
+        '404':
+          description: Профиль не найден
+
+  /api/v1/health:
+    get:
+      summary: Возвращает состояние сервиса
+      responses:
+        '200':
+          description: Сервис работает

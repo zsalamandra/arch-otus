@@ -1,0 +1,85 @@
+openapi: 3.0.3
+info:
+  title: Сервис Авторизации
+  version: 1.0.0
+paths:
+  /api/v1/register:
+    post:
+      summary: Регистрация нового пользователя
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - email
+                - password
+      responses:
+        '201':
+          description: Успешная регистрация
+        '400':
+          description: Неверные данные
+
+  /api/v1/login:
+    post:
+      summary: Логин
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: Успешный логин
+        '401':
+          description: Неверные данные
+
+  /api/v1/logout:
+    post:
+      summary: Логаут
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+              required:
+                - token
+      responses:
+        '200':
+          description: Успешный логаут
+        '401':
+          description: Неверный токен
+
+  /api/v1/.well-known/jwks.json:
+    get:
+      summary: Публичный ключ для валидации JWT
+      responses:
+        '200':
+          description: Публичный ключ
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v1/health:
+    get:
+      summary: Возвращает состояние сервиса
+      responses:
+        '200':
+          description: Сервис работает

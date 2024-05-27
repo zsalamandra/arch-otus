@@ -1,0 +1,105 @@
+openapi: 3.0.3
+info:
+  title: Сервис Проектов
+  version: 1.0.0
+paths:
+  /api/v1/projects:
+    get:
+      summary: Отображает все проекты пользователя
+      responses:
+        '200':
+          description: Список проектов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+
+    post:
+      summary: Создание нового проекта
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+              required:
+                - name
+      responses:
+        '201':
+          description: Проект создан
+
+  /api/v1/projects/{id}:
+    get:
+      summary: Отображает детальную информацию по проекту
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Информация о проекте
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+        '404':
+          description: Проект не найден
+
+    patch:
+      summary: Редактирование проекта
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: Проект обновлен
+        '404':
+          description: Проект не найден
+
+    delete:
+      summary: Удаление проекта
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Проект удален
+        '404':
+          description: Проект не найден
+
+  /api/v1/projects/health:
+    get:
+      summary: Возвращает состояние сервиса
+      responses:
+        '200':
+          description: Сервис работает

@@ -1,0 +1,138 @@
+openapi: 3.0.3
+info:
+  title: Сервис Задач
+  version: 1.0.0
+paths:
+  /api/v1/projects/{projectId}/tasks:
+    get:
+      summary: Отображает все задачи в проекте
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Список задач
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    title:
+                      type: string
+
+    post:
+      summary: Создание новой задачи
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+              required:
+                - title
+      responses:
+        '201':
+          description: Задача создана
+
+  /api/v1/projects/{projectId}/tasks/{id}:
+    get:
+      summary: Отображает детальную информацию по задаче
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Информация о задаче
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  title:
+                    type: string
+                  description:
+                    type: string
+        '404':
+          description: Задача не найдена
+
+    patch:
+      summary: Редактирование задачи
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Задача обновлена
+        '404':
+          description: Задача не найдена
+
+    delete:
+      summary: Удаление задачи
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Задача удалена
+        '404':
+          description: Задача не найдена
+
+  /api/v1/tasks/health:
+    get:
+      summary: Возвращает состояние сервиса
+      responses:
+        '200':
+          description: Сервис работает

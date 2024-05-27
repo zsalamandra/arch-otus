@@ -1,0 +1,132 @@
+openapi: 3.0.3
+info:
+  title: Сервис Комментариев
+  version: 1.0.0
+paths:
+  /api/v1/tasks/{taskId}/comments:
+    get:
+      summary: Отображает все комментарии к задаче
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Список комментариев
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    content:
+                      type: string
+
+    post:
+      summary: Добавление нового комментария
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+              required:
+                - content
+      responses:
+        '201':
+          description: Комментарий добавлен
+
+  /api/v1/tasks/{taskId}/comments/{id}:
+    get:
+      summary: Отображает детальную информацию по комментарию
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Информация о комментарии
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  content:
+                    type: string
+        '404':
+          description: Комментарий не найден
+
+    patch:
+      summary: Редактирование комментария
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+      responses:
+        '200':
+          description: Комментарий обновлен
+        '404':
+          description: Комментарий не найден
+
+    delete:
+      summary: Удаление комментария
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Комментарий удален
+        '404':
+          description: Комментарий не найден
+
+  /api/v1/comments/health:
+    get:
+      summary: Возвращает состояние сервиса
+      responses:
+        '200':
+          description: Сервис работает
